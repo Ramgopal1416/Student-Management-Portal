@@ -1,22 +1,41 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Smart Attendance Management System API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: teachers
+    description: Teacher management
+  - name: students
+    description: Student management
+  - name: periods
+    description: Period management
+  - name: attendance
+    description: Attendance operations
+  - name: leaves
+    description: Leave request management
+  - name: announcements
+    description: Announcement management
+  - name: notifications
+    description: Notification management
+  - name: reports
+    description: Reports and analytics
+  - name: dashboard
+    description: Dashboard summaries
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +43,1044 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # ─── Auth ─────────────────────────────────────────────────────────────────
+
+  /auth/teacher/register:
+    post:
+      operationId: registerTeacher
+      tags: [auth]
+      summary: Register a new teacher account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TeacherRegisterInput"
+      responses:
+        "201":
+          description: Registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/teacher/login:
+    post:
+      operationId: loginTeacher
+      tags: [auth]
+      summary: Teacher login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TeacherLoginInput"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/student/login:
+    post:
+      operationId: loginStudent
+      tags: [auth]
+      summary: Student login using registration number and date of birth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StudentLoginInput"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/parent/login:
+    post:
+      operationId: loginParent
+      tags: [auth]
+      summary: Parent login using email and student registration number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ParentLoginInput"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout current session
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current session user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionUser"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/teacher/forgot-password:
+    post:
+      operationId: forgotPassword
+      tags: [auth]
+      summary: Request password reset email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordInput"
+      responses:
+        "200":
+          description: Reset email sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /auth/teacher/reset-password:
+    post:
+      operationId: resetPassword
+      tags: [auth]
+      summary: Reset teacher password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordInput"
+      responses:
+        "200":
+          description: Password reset successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  # ─── Students ─────────────────────────────────────────────────────────────
+
+  /students:
+    get:
+      operationId: listStudents
+      tags: [students]
+      summary: List students with optional filters
+      parameters:
+        - name: department
+          in: query
+          schema:
+            type: string
+        - name: year
+          in: query
+          schema:
+            type: string
+        - name: section
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Student list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentListResponse"
+    post:
+      operationId: createStudent
+      tags: [students]
+      summary: Register a new student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StudentInput"
+      responses:
+        "201":
+          description: Student created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /students/{id}:
+    get:
+      operationId: getStudent
+      tags: [students]
+      summary: Get student by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Student details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      operationId: updateStudent
+      tags: [students]
+      summary: Update student details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StudentUpdate"
+      responses:
+        "200":
+          description: Updated student
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+    delete:
+      operationId: deleteStudent
+      tags: [students]
+      summary: Delete a student
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /students/{id}/face:
+    post:
+      operationId: registerFace
+      tags: [students]
+      summary: Register or update face data for a student
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FaceDataInput"
+      responses:
+        "200":
+          description: Face registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FaceDataStatus"
+
+  /students/{id}/face-status:
+    get:
+      operationId: getFaceStatus
+      tags: [students]
+      summary: Get face registration status for a student
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Face status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FaceDataStatus"
+
+  /students/me:
+    get:
+      operationId: getStudentMe
+      tags: [students]
+      summary: Get logged-in student profile
+      responses:
+        "200":
+          description: Student profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+
+  # ─── Periods ──────────────────────────────────────────────────────────────
+
+  /periods:
+    get:
+      operationId: listPeriods
+      tags: [periods]
+      summary: List all periods
+      parameters:
+        - name: department
+          in: query
+          schema:
+            type: string
+        - name: section
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Period list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Period"
+    post:
+      operationId: createPeriod
+      tags: [periods]
+      summary: Create a new period
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PeriodInput"
+      responses:
+        "201":
+          description: Period created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Period"
+
+  /periods/{id}:
+    put:
+      operationId: updatePeriod
+      tags: [periods]
+      summary: Update a period
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PeriodUpdate"
+      responses:
+        "200":
+          description: Updated period
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Period"
+    delete:
+      operationId: deletePeriod
+      tags: [periods]
+      summary: Delete a period
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  # ─── Attendance ───────────────────────────────────────────────────────────
+
+  /attendance:
+    get:
+      operationId: listAttendance
+      tags: [attendance]
+      summary: List attendance records with filters
+      parameters:
+        - name: studentId
+          in: query
+          schema:
+            type: integer
+        - name: periodId
+          in: query
+          schema:
+            type: integer
+        - name: date
+          in: query
+          schema:
+            type: string
+        - name: department
+          in: query
+          schema:
+            type: string
+        - name: section
+          in: query
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          schema:
+            type: string
+        - name: endDate
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Attendance records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AttendanceRecord"
+    post:
+      operationId: markAttendance
+      tags: [attendance]
+      summary: Mark attendance for a student in a period
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttendanceInput"
+      responses:
+        "201":
+          description: Attendance marked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AttendanceRecord"
+
+  /attendance/bulk:
+    post:
+      operationId: markBulkAttendance
+      tags: [attendance]
+      summary: Mark attendance for multiple students at once
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkAttendanceInput"
+      responses:
+        "201":
+          description: Bulk attendance marked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BulkAttendanceResult"
+
+  /attendance/{id}:
+    put:
+      operationId: updateAttendance
+      tags: [attendance]
+      summary: Correct an attendance record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttendanceUpdate"
+      responses:
+        "200":
+          description: Updated attendance
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AttendanceRecord"
+
+  /attendance/summary:
+    get:
+      operationId: getAttendanceSummary
+      tags: [attendance]
+      summary: Get attendance summary grouped by student or class
+      parameters:
+        - name: studentId
+          in: query
+          schema:
+            type: integer
+        - name: department
+          in: query
+          schema:
+            type: string
+        - name: section
+          in: query
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          schema:
+            type: string
+        - name: endDate
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Attendance summary
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AttendanceSummary"
+
+  /attendance/heatmap:
+    get:
+      operationId: getAttendanceHeatmap
+      tags: [attendance]
+      summary: Get daily attendance heatmap data for a student or class
+      parameters:
+        - name: studentId
+          in: query
+          schema:
+            type: integer
+        - name: month
+          in: query
+          schema:
+            type: integer
+        - name: year
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Heatmap data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HeatmapEntry"
+
+  # ─── Leave Requests ───────────────────────────────────────────────────────
+
+  /leaves:
+    get:
+      operationId: listLeaves
+      tags: [leaves]
+      summary: List leave requests
+      parameters:
+        - name: studentId
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, approved, rejected]
+      responses:
+        "200":
+          description: Leave requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaveRequest"
+    post:
+      operationId: createLeave
+      tags: [leaves]
+      summary: Submit a leave request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LeaveInput"
+      responses:
+        "201":
+          description: Leave request created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeaveRequest"
+
+  /leaves/{id}:
+    get:
+      operationId: getLeave
+      tags: [leaves]
+      summary: Get a leave request by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Leave request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeaveRequest"
+    put:
+      operationId: updateLeave
+      tags: [leaves]
+      summary: Approve or reject a leave request
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LeaveStatusUpdate"
+      responses:
+        "200":
+          description: Updated leave request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeaveRequest"
+
+  # ─── Announcements ────────────────────────────────────────────────────────
+
+  /announcements:
+    get:
+      operationId: listAnnouncements
+      tags: [announcements]
+      summary: List announcements
+      parameters:
+        - name: priority
+          in: query
+          schema:
+            type: string
+            enum: [low, medium, high, urgent]
+      responses:
+        "200":
+          description: Announcements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Announcement"
+    post:
+      operationId: createAnnouncement
+      tags: [announcements]
+      summary: Create an announcement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnnouncementInput"
+      responses:
+        "201":
+          description: Announcement created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Announcement"
+
+  /announcements/{id}:
+    put:
+      operationId: updateAnnouncement
+      tags: [announcements]
+      summary: Update an announcement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnnouncementUpdate"
+      responses:
+        "200":
+          description: Updated announcement
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Announcement"
+    delete:
+      operationId: deleteAnnouncement
+      tags: [announcements]
+      summary: Delete an announcement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /announcements/{id}/read:
+    post:
+      operationId: markAnnouncementRead
+      tags: [announcements]
+      summary: Mark announcement as read
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Marked as read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  # ─── Notifications ────────────────────────────────────────────────────────
+
+  /notifications:
+    get:
+      operationId: listNotifications
+      tags: [notifications]
+      summary: List notifications for current user
+      responses:
+        "200":
+          description: Notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+
+  /notifications/{id}/read:
+    post:
+      operationId: markNotificationRead
+      tags: [notifications]
+      summary: Mark a notification as read
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Marked as read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /notifications/read-all:
+    post:
+      operationId: markAllNotificationsRead
+      tags: [notifications]
+      summary: Mark all notifications as read
+      responses:
+        "200":
+          description: All marked as read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  # ─── Dashboard ────────────────────────────────────────────────────────────
+
+  /dashboard/teacher:
+    get:
+      operationId: getTeacherDashboard
+      tags: [dashboard]
+      summary: Get teacher dashboard summary
+      responses:
+        "200":
+          description: Teacher dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeacherDashboard"
+
+  /dashboard/student:
+    get:
+      operationId: getStudentDashboard
+      tags: [dashboard]
+      summary: Get student dashboard summary
+      responses:
+        "200":
+          description: Student dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentDashboard"
+
+  /dashboard/parent:
+    get:
+      operationId: getParentDashboard
+      tags: [dashboard]
+      summary: Get parent dashboard for their child
+      responses:
+        "200":
+          description: Parent dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ParentDashboard"
+
+  /dashboard/attendance-trends:
+    get:
+      operationId: getAttendanceTrends
+      tags: [dashboard]
+      summary: Get monthly attendance trend data for charts
+      parameters:
+        - name: studentId
+          in: query
+          schema:
+            type: integer
+        - name: year
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Monthly trend data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MonthlyTrend"
+
+  /dashboard/low-attendance:
+    get:
+      operationId: getLowAttendanceStudents
+      tags: [dashboard]
+      summary: Get students with low attendance (below threshold)
+      parameters:
+        - name: threshold
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Low attendance students
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LowAttendanceAlert"
+
+  # ─── Reports ──────────────────────────────────────────────────────────────
+
+  /reports/class:
+    get:
+      operationId: getClassReport
+      tags: [reports]
+      summary: Get class attendance report with filters
+      parameters:
+        - name: department
+          in: query
+          schema:
+            type: string
+        - name: year
+          in: query
+          schema:
+            type: string
+        - name: section
+          in: query
+          schema:
+            type: string
+        - name: periodId
+          in: query
+          schema:
+            type: integer
+        - name: startDate
+          in: query
+          schema:
+            type: string
+        - name: endDate
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Class report
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ClassReportRow"
+
+  /reports/student:
+    get:
+      operationId: fetchStudentReport
+      tags: [reports]
+      summary: Get individual student attendance report
+      parameters:
+        - name: studentId
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: startDate
+          in: query
+          schema:
+            type: string
+        - name: endDate
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Student report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentReport"
+
+  # ─── Teachers ─────────────────────────────────────────────────────────────
+
+  /teachers/me:
+    get:
+      operationId: getTeacherMe
+      tags: [teachers]
+      summary: Get logged-in teacher profile
+      responses:
+        "200":
+          description: Teacher profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Teacher"
+    put:
+      operationId: updateTeacherMe
+      tags: [teachers]
+      summary: Update teacher profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TeacherProfileUpdate"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Teacher"
+
+# ─── Schemas ────────────────────────────────────────────────────────────────
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +1091,736 @@ components:
       required:
         - status
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+
+    # ─── Auth ─────────────────────────────────────────────────────────────
+
+    TeacherRegisterInput:
+      type: object
+      required: [name, email, password, employeeId, department]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        employeeId:
+          type: string
+        department:
+          type: string
+        phone:
+          type: ["string", "null"]
+
+    TeacherLoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    StudentLoginInput:
+      type: object
+      required: [registrationNumber, dateOfBirth]
+      properties:
+        registrationNumber:
+          type: string
+        dateOfBirth:
+          type: string
+
+    ParentLoginInput:
+      type: object
+      required: [email, studentRegistrationNumber]
+      properties:
+        email:
+          type: string
+        studentRegistrationNumber:
+          type: string
+
+    ForgotPasswordInput:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+
+    ResetPasswordInput:
+      type: object
+      required: [token, newPassword]
+      properties:
+        token:
+          type: string
+        newPassword:
+          type: string
+
+    AuthResponse:
+      type: object
+      required: [user, token]
+      properties:
+        user:
+          $ref: "#/components/schemas/SessionUser"
+        token:
+          type: string
+
+    SessionUser:
+      type: object
+      required: [id, role, name, email]
+      properties:
+        id:
+          type: integer
+        role:
+          type: string
+          enum: [teacher, student, parent]
+        name:
+          type: string
+        email:
+          type: string
+        studentId:
+          type: ["integer", "null"]
+
+    # ─── Teacher ──────────────────────────────────────────────────────────
+
+    Teacher:
+      type: object
+      required: [id, name, email, employeeId, department, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        employeeId:
+          type: string
+        department:
+          type: string
+        phone:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    TeacherProfileUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: ["string", "null"]
+        department:
+          type: string
+
+    # ─── Student ──────────────────────────────────────────────────────────
+
+    Student:
+      type: object
+      required: [id, name, registrationNumber, department, year, section, dateOfBirth, gender, faceRegistered, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        registrationNumber:
+          type: string
+        department:
+          type: string
+        year:
+          type: string
+        section:
+          type: string
+        dateOfBirth:
+          type: string
+        gender:
+          type: string
+        studentEmail:
+          type: ["string", "null"]
+        parentName:
+          type: ["string", "null"]
+        parentEmail:
+          type: ["string", "null"]
+        parentPhone:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        faceRegistered:
+          type: boolean
+        faceUpdatedAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    StudentInput:
+      type: object
+      required: [name, registrationNumber, department, year, section, dateOfBirth, gender]
+      properties:
+        name:
+          type: string
+        registrationNumber:
+          type: string
+        department:
+          type: string
+        year:
+          type: string
+        section:
+          type: string
+        dateOfBirth:
+          type: string
+        gender:
+          type: string
+        studentEmail:
+          type: ["string", "null"]
+        parentName:
+          type: ["string", "null"]
+        parentEmail:
+          type: ["string", "null"]
+        parentPhone:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+
+    StudentUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        department:
+          type: string
+        year:
+          type: string
+        section:
+          type: string
+        studentEmail:
+          type: ["string", "null"]
+        parentName:
+          type: ["string", "null"]
+        parentEmail:
+          type: ["string", "null"]
+        parentPhone:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+
+    StudentListResponse:
+      type: object
+      required: [students, total, page, limit]
+      properties:
+        students:
+          type: array
+          items:
+            $ref: "#/components/schemas/Student"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    FaceDataInput:
+      type: object
+      required: [imageData]
+      properties:
+        imageData:
+          type: array
+          items:
+            type: string
+          description: Array of base64 encoded face images
+
+    FaceDataStatus:
+      type: object
+      required: [studentId, registered, updatedAt]
+      properties:
+        studentId:
+          type: integer
+        registered:
+          type: boolean
+        updatedAt:
+          type: ["string", "null"]
+        accuracy:
+          type: ["number", "null"]
+
+    # ─── Period ───────────────────────────────────────────────────────────
+
+    Period:
+      type: object
+      required: [id, name, subject, startTime, endTime, department, year, section, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        subject:
+          type: string
+        startTime:
+          type: string
+        endTime:
+          type: string
+        department:
+          type: string
+        year:
+          type: string
+        section:
+          type: string
+        createdAt:
+          type: string
+
+    PeriodInput:
+      type: object
+      required: [name, subject, startTime, endTime, department, year, section]
+      properties:
+        name:
+          type: string
+        subject:
+          type: string
+        startTime:
+          type: string
+        endTime:
+          type: string
+        department:
+          type: string
+        year:
+          type: string
+        section:
+          type: string
+
+    PeriodUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        subject:
+          type: string
+        startTime:
+          type: string
+        endTime:
+          type: string
+
+    # ─── Attendance ───────────────────────────────────────────────────────
+
+    AttendanceRecord:
+      type: object
+      required: [id, studentId, periodId, date, status, markedAt]
+      properties:
+        id:
+          type: integer
+        studentId:
+          type: integer
+        studentName:
+          type: ["string", "null"]
+        registrationNumber:
+          type: ["string", "null"]
+        periodId:
+          type: integer
+        periodName:
+          type: ["string", "null"]
+        subject:
+          type: ["string", "null"]
+        date:
+          type: string
+        status:
+          type: string
+          enum: [present, absent, late]
+        markedAt:
+          type: string
+
+    AttendanceInput:
+      type: object
+      required: [studentId, periodId, date, status]
+      properties:
+        studentId:
+          type: integer
+        periodId:
+          type: integer
+        date:
+          type: string
+        status:
+          type: string
+          enum: [present, absent, late]
+
+    BulkAttendanceInput:
+      type: object
+      required: [periodId, date, records]
+      properties:
+        periodId:
+          type: integer
+        date:
+          type: string
+        records:
+          type: array
+          items:
+            type: object
+            required: [studentId, status]
+            properties:
+              studentId:
+                type: integer
+              status:
+                type: string
+                enum: [present, absent, late]
+
+    BulkAttendanceResult:
+      type: object
+      required: [created, updated, total]
+      properties:
+        created:
+          type: integer
+        updated:
+          type: integer
+        total:
+          type: integer
+
+    AttendanceUpdate:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [present, absent, late]
+
+    AttendanceSummary:
+      type: object
+      required: [studentId, studentName, registrationNumber, totalClasses, presentCount, absentCount, lateCount, percentage]
+      properties:
+        studentId:
+          type: integer
+        studentName:
+          type: string
+        registrationNumber:
+          type: string
+        totalClasses:
+          type: integer
+        presentCount:
+          type: integer
+        absentCount:
+          type: integer
+        lateCount:
+          type: integer
+        percentage:
+          type: number
+
+    HeatmapEntry:
+      type: object
+      required: [date, present, absent, late]
+      properties:
+        date:
+          type: string
+        present:
+          type: integer
+        absent:
+          type: integer
+        late:
+          type: integer
+
+    # ─── Leave Request ────────────────────────────────────────────────────
+
+    LeaveRequest:
+      type: object
+      required: [id, studentId, leaveDate, reason, status, createdAt]
+      properties:
+        id:
+          type: integer
+        studentId:
+          type: integer
+        studentName:
+          type: ["string", "null"]
+        registrationNumber:
+          type: ["string", "null"]
+        leaveDate:
+          type: string
+        reason:
+          type: string
+        attachmentUrl:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        remarks:
+          type: ["string", "null"]
+        reviewedBy:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+
+    LeaveInput:
+      type: object
+      required: [leaveDate, reason]
+      properties:
+        leaveDate:
+          type: string
+        reason:
+          type: string
+        attachmentUrl:
+          type: ["string", "null"]
+
+    LeaveStatusUpdate:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [approved, rejected]
+        remarks:
+          type: ["string", "null"]
+
+    # ─── Announcement ─────────────────────────────────────────────────────
+
+    Announcement:
+      type: object
+      required: [id, title, description, priority, createdAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        priority:
+          type: string
+          enum: [low, medium, high, urgent]
+        teacherName:
+          type: ["string", "null"]
+        isRead:
+          type: boolean
+        createdAt:
+          type: string
+
+    AnnouncementInput:
+      type: object
+      required: [title, description, priority]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        priority:
+          type: string
+          enum: [low, medium, high, urgent]
+
+    AnnouncementUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        priority:
+          type: string
+          enum: [low, medium, high, urgent]
+
+    # ─── Notification ─────────────────────────────────────────────────────
+
+    Notification:
+      type: object
+      required: [id, message, type, isRead, createdAt]
+      properties:
+        id:
+          type: integer
+        message:
+          type: string
+        type:
+          type: string
+          enum: [absence, low_attendance, leave_update, announcement]
+        isRead:
+          type: boolean
+        createdAt:
+          type: string
+
+    # ─── Dashboard ────────────────────────────────────────────────────────
+
+    TeacherDashboard:
+      type: object
+      required: [totalStudents, presentToday, absentToday, attendancePercentage, pendingLeaves, recentAnnouncements, departmentStats]
+      properties:
+        totalStudents:
+          type: integer
+        presentToday:
+          type: integer
+        absentToday:
+          type: integer
+        attendancePercentage:
+          type: number
+        pendingLeaves:
+          type: integer
+        recentAnnouncements:
+          type: array
+          items:
+            $ref: "#/components/schemas/Announcement"
+        departmentStats:
+          type: array
+          items:
+            $ref: "#/components/schemas/DepartmentStat"
+        unreadNotifications:
+          type: integer
+
+    StudentDashboard:
+      type: object
+      required: [attendancePercentage, presentDays, absentDays, lateDays, totalDays, pendingLeaves, subjectWiseAttendance, recentAttendance]
+      properties:
+        attendancePercentage:
+          type: number
+        presentDays:
+          type: integer
+        absentDays:
+          type: integer
+        lateDays:
+          type: integer
+        totalDays:
+          type: integer
+        pendingLeaves:
+          type: integer
+        subjectWiseAttendance:
+          type: array
+          items:
+            $ref: "#/components/schemas/SubjectAttendance"
+        recentAttendance:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttendanceRecord"
+        unreadAnnouncements:
+          type: integer
+
+    ParentDashboard:
+      type: object
+      required: [student, attendancePercentage, presentDays, absentDays, recentAttendance, pendingLeaves, recentAnnouncements]
+      properties:
+        student:
+          $ref: "#/components/schemas/Student"
+        attendancePercentage:
+          type: number
+        presentDays:
+          type: integer
+        absentDays:
+          type: integer
+        lateDays:
+          type: integer
+        totalDays:
+          type: integer
+        recentAttendance:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttendanceRecord"
+        pendingLeaves:
+          type: integer
+        recentAnnouncements:
+          type: array
+          items:
+            $ref: "#/components/schemas/Announcement"
+
+    DepartmentStat:
+      type: object
+      required: [department, totalStudents, presentToday, percentage]
+      properties:
+        department:
+          type: string
+        totalStudents:
+          type: integer
+        presentToday:
+          type: integer
+        percentage:
+          type: number
+
+    SubjectAttendance:
+      type: object
+      required: [subject, totalClasses, present, percentage]
+      properties:
+        subject:
+          type: string
+        totalClasses:
+          type: integer
+        present:
+          type: integer
+        percentage:
+          type: number
+
+    MonthlyTrend:
+      type: object
+      required: [month, year, presentCount, absentCount, percentage]
+      properties:
+        month:
+          type: integer
+        year:
+          type: integer
+        monthName:
+          type: string
+        presentCount:
+          type: integer
+        absentCount:
+          type: integer
+        percentage:
+          type: number
+
+    LowAttendanceAlert:
+      type: object
+      required: [studentId, studentName, registrationNumber, department, section, percentage]
+      properties:
+        studentId:
+          type: integer
+        studentName:
+          type: string
+        registrationNumber:
+          type: string
+        department:
+          type: string
+        section:
+          type: string
+        percentage:
+          type: number
+
+    # ─── Reports ──────────────────────────────────────────────────────────
+
+    ClassReportRow:
+      type: object
+      required: [studentId, studentName, registrationNumber, totalPresent, totalAbsent, totalLate, percentage]
+      properties:
+        studentId:
+          type: integer
+        studentName:
+          type: string
+        registrationNumber:
+          type: string
+        department:
+          type: string
+        section:
+          type: string
+        totalPresent:
+          type: integer
+        totalAbsent:
+          type: integer
+        totalLate:
+          type: integer
+        percentage:
+          type: number
+
+    StudentReport:
+      type: object
+      required: [student, summary, dailyAttendance, subjectWiseAttendance, leaveHistory]
+      properties:
+        student:
+          $ref: "#/components/schemas/Student"
+        summary:
+          $ref: "#/components/schemas/AttendanceSummary"
+        dailyAttendance:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttendanceRecord"
+        subjectWiseAttendance:
+          type: array
+          items:
+            $ref: "#/components/schemas/SubjectAttendance"
+        leaveHistory:
+          type: array
+          items:
+            $ref: "#/components/schemas/LeaveRequest"

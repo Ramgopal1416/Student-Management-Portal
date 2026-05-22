@@ -1,0 +1,621 @@
+Build a complete full-stack web application called:
+
+Smart Attendance Management System Using Face Recognition with Parent Monitoring
+
+Create a professional, modern, responsive, production-ready web application for colleges/schools that automates attendance using AI face recognition, period-wise attendance, leave management, parent monitoring, email notifications, announcements, downloadable reports, and multi-role authentication.
+
+The system should have three user roles:
+
+1. Teacher/Admin
+2. Student
+3. Parent
+
+The application should look like a modern college ERP dashboard with a clean UI, responsive design, charts, analytics, filters, search functionality, and secure authentication.
+
+---
+
+CORE OBJECTIVE
+
+Develop an AI-powered attendance system where:
+
+- Teachers register students using face recognition.
+- Attendance is taken for every period separately.
+- Students log in and view attendance and request leave.
+- Parents monitor attendance and receive absence notifications through email.
+- Teachers manage attendance, leaves, reports, and announcements.
+- Teachers can update student face data anytime.
+
+---
+
+ROLE-BASED AUTHENTICATION
+
+Implement secure role-based authentication and authorization.
+
+1. Teacher/Admin Login
+
+Teacher should be able to:
+
+- Create account
+- Login using:
+  - Email
+  - Password
+- Forgot password
+- Reset password
+- Secure session handling
+
+Only teachers/admins should have access to admin features.
+
+---
+
+2. Student Login
+
+Students should log in using:
+
+- Registration Number
+- Date of Birth
+
+After login, students should access their dashboard.
+
+---
+
+3. Parent Login
+
+Parents should log in using:
+
+- Parent Email ID
+- Student Registration Number
+
+Parents should only access their child’s information.
+
+---
+
+TEACHER / ADMIN DASHBOARD
+
+Create a professional admin dashboard with sidebar navigation and analytics.
+
+Dashboard should show:
+
+- Total Students
+- Present Today
+- Absent Today
+- Attendance Percentage
+- Pending Leave Requests
+- Recent Announcements
+- Attendance Graphs
+- Monthly Attendance Trends
+
+---
+
+STUDENT REGISTRATION MODULE
+
+Teacher should be able to add students.
+
+Student Details:
+
+- Full Name
+- Registration Number (Unique)
+- Department
+- Year
+- Section
+- Date of Birth
+- Student Email
+- Parent Name
+- Parent Email
+- Parent Phone Number
+- Gender
+- Address (Optional)
+
+Validation:
+
+- Registration number must be unique.
+- Prevent duplicate student creation.
+
+---
+
+FACE REGISTRATION MODULE
+
+During student registration:
+
+- Open webcam access.
+- Capture multiple student face images.
+- Train face recognition model.
+- Store face embeddings securely.
+
+Capture:
+
+- Front face
+- Left side
+- Right side
+- Slight up angle
+- Slight down angle
+
+Requirements:
+
+- Real-time webcam capture.
+- High accuracy face detection.
+- Face encoding storage.
+- Duplicate face prevention.
+- Face recognition confidence scoring.
+
+The system should display:
+
+“Face Successfully Registered”
+
+after successful registration.
+
+---
+
+FACE UPDATE / RE-REGISTRATION MODULE
+
+Teacher/Admin should be able to update or re-register student face data at any time.
+
+Teacher should:
+
+- Search student by:
+  - Registration Number
+  - Student Name
+  - Department
+  - Section
+
+Teacher clicks:
+
+Update Face Data
+
+Features:
+
+- Webcam opens.
+- Capture new face images.
+- Replace previous face data.
+- Retrain face recognition model.
+
+Security:
+
+- Only teachers can update face data.
+- Show confirmation popup before replacing data.
+- Store update logs.
+
+Student profile should show:
+
+- Face Registered Status
+- Last Face Update Date
+- Face Recognition Accuracy
+
+Add button:
+
+Re-Train Face Model
+
+to refresh accuracy.
+
+---
+
+PERIOD MANAGEMENT MODULE
+
+Teacher should create/manage periods.
+
+Teacher can:
+
+- Add period
+- Edit period
+- Delete period
+
+Period details:
+
+- Period Name
+- Subject Name
+- Start Time
+- End Time
+- Class/Section
+
+Examples:
+
+- Period 1
+- Period 2
+- Lab Session
+- Tutorial Session
+
+---
+
+PERIOD-WISE ATTENDANCE MODULE
+
+Attendance must be taken for each period separately.
+
+Teacher should:
+
+1. Select:
+   
+   - Department
+   - Year
+   - Section
+   - Subject
+   - Period
+
+2. Click:
+
+Start Attendance
+
+Then:
+
+- Webcam activates.
+- Real-time face recognition begins.
+- Students are automatically recognized.
+- Attendance marked instantly.
+
+Attendance Status:
+
+- Present
+- Absent
+- Late
+
+Rules:
+
+- One attendance per student per period.
+- No duplicate attendance.
+- Attendance automatically locks after period ends.
+- Save attendance timestamp.
+- Prevent fake attendance.
+
+Recognition Screen Should Show:
+
+- Student Face
+- Student Name
+- Registration Number
+- Attendance Marked Successfully
+
+Teacher should also have:
+
+Manual Attendance Correction Option
+
+---
+
+LEAVE REQUEST MANAGEMENT MODULE
+
+Students should be able to submit leave requests.
+
+Student enters:
+
+- Leave Date
+- Reason
+- Attachment (Optional)
+
+Teacher should:
+
+- View leave requests
+- Approve leave
+- Reject leave
+- Add remarks
+
+Statuses:
+
+- Pending
+- Approved
+- Rejected
+
+Students and parents can track leave status.
+
+---
+
+ATTENDANCE REPORT MODULE
+
+Teacher should download reports.
+
+Full Class Report
+
+Filter by:
+
+- Department
+- Year
+- Section
+- Subject
+- Period
+- Date Range
+
+Report should include:
+
+- Student Name
+- Registration Number
+- Total Present
+- Total Absent
+- Attendance Percentage
+
+---
+
+Individual Student Report
+
+Filter by:
+
+- Registration Number
+- Date Range
+
+Include:
+
+- Daily attendance
+- Period-wise attendance
+- Attendance percentage
+- Leave history
+
+Export formats:
+
+- PDF
+- Excel
+
+Include:
+
+- Print Option
+- Download Option
+
+---
+
+STUDENT DASHBOARD
+
+Student should see:
+
+Attendance
+
+- Daily attendance
+- Subject-wise attendance
+- Period-wise attendance
+- Monthly attendance percentage
+
+Leave Requests
+
+- Submit leave
+- View leave status
+
+Announcements
+
+- View teacher announcements
+
+Profile
+
+- Personal details
+
+Dashboard cards:
+
+- Total Attendance %
+- Present Days
+- Absent Days
+- Leave Status
+
+---
+
+PARENT DASHBOARD
+
+Parent should see:
+
+Attendance Monitoring
+
+- Child attendance
+- Daily attendance
+- Period-wise attendance
+- Monthly attendance percentage
+
+Leave Tracking
+
+- View leave requests
+- Approval status
+
+Announcements
+
+- Teacher announcements
+
+Child Performance Summary
+
+- Attendance graphs
+- Trends
+
+Parent should only access their child data.
+
+---
+
+ANNOUNCEMENT MODULE
+
+Teacher should create announcements.
+
+Fields:
+
+- Title
+- Description
+- Priority Level
+- Date
+
+Announcements visible to:
+
+- Students
+- Parents
+
+Features:
+
+- Notification badge
+- Read/unread status
+
+Examples:
+
+- Exam Notice
+- Holiday Notice
+- Assignment Submission
+- Internal Marks Update
+
+---
+
+EMAIL NOTIFICATION SYSTEM
+
+Automatically send emails to parents for:
+
+1. Student absent
+2. Low attendance percentage
+3. Leave approval/rejection
+4. Important announcements
+
+Example email:
+
+“Your child with Registration Number [ID] was absent today in Period 2.”
+
+Email system should support:
+
+- SMTP
+- Automated email scheduling
+- Email templates
+
+---
+
+SEARCH & FILTER MODULE
+
+Add advanced filtering.
+
+Teacher can search:
+
+- Student Name
+- Registration Number
+- Class
+- Department
+- Attendance Date
+
+Include:
+
+- Pagination
+- Sorting
+- Search bar
+
+---
+
+DATABASE DESIGN
+
+Create complete relational database schema with proper foreign key relationships.
+
+Tables:
+
+- Teachers
+- Students
+- Parents
+- Attendance
+- Face_Data
+- Leave_Requests
+- Periods
+- Subjects
+- Announcements
+- Notifications
+- Email_Logs
+- Attendance_Reports
+
+Ensure optimized schema.
+
+---
+
+ANALYTICS DASHBOARD
+
+Teacher analytics should include:
+
+- Present vs Absent Chart
+- Monthly Attendance Trends
+- Attendance Heatmaps
+- Student-wise Performance
+- Low Attendance Alerts
+
+Include graphs and charts.
+
+---
+
+SECURITY FEATURES
+
+Implement:
+
+- Role-based access control
+- Secure authentication
+- Encrypted passwords
+- JWT or secure session management
+- Input validation
+- SQL injection prevention
+- Duplicate attendance prevention
+- Protected routes
+- Activity logging
+
+---
+
+UI / UX REQUIREMENTS
+
+Build a modern professional UI.
+
+Requirements:
+
+- Responsive mobile + desktop design
+- Sidebar navigation
+- Dashboard cards
+- Tables with filters
+- Search bars
+- Charts
+- Dark mode + Light mode
+- Professional college ERP design
+- Smooth animations
+- Clean typography
+
+---
+
+TECHNOLOGY STACK
+
+Frontend:
+
+- React + TypeScript
+- Tailwind CSS
+- Modern UI components
+
+Backend:
+
+- Python Flask or Node.js backend
+
+Database:
+
+- PostgreSQL or MySQL
+
+Face Recognition:
+
+- OpenCV
+- Face Recognition Library
+- Real-time webcam face detection
+
+Authentication:
+
+- Secure role-based login
+
+Storage:
+
+- Cloud/local secure storage
+
+Email:
+
+- SMTP integration
+
+---
+
+EXTRA FEATURES
+
+Include:
+
+- Real-time notifications
+- Notification center
+- Monthly attendance trends
+- Attendance history
+- Search student
+- Profile management
+- Downloadable reports
+- Error handling
+- Loading states
+- Empty states
+- Toast notifications
+
+---
+
+Generate:
+
+1. Complete frontend UI
+2. Complete backend APIs
+3. Full database schema
+4. Authentication system
+5. Face recognition workflow
+6. Admin, student, and parent dashboards
+7. Attendance tracking system
+8. Leave management system
+9. Email notification system
+10. Downloadable reports (PDF + Excel)
+11. Complete deployment-ready production code
+
+The application should be fully functional, scalable, professional, and ready for real-world college/school usage.
