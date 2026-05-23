@@ -4,7 +4,6 @@ import {
   useListPeriods,
   useMarkBulkAttendance,
   getListAttendanceQueryKey,
-  getListStudentsQueryKey,
 } from "@workspace/api-client-react";
 import type { Student } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -77,9 +76,8 @@ export default function TeacherAttendance() {
     limit: 100,
   };
 
-  const { data: studentsData, isLoading: loadingStudents } = useListStudents(studentParams, {
-    query: { enabled: mode !== "setup", queryKey: getListStudentsQueryKey(studentParams) },
-  });
+  // Always fetch students eagerly so the list is ready when a mode is started.
+  const { data: studentsData, isLoading: loadingStudents } = useListStudents(studentParams);
   const { data: periods } = useListPeriods();
   const bulkMutation = useMarkBulkAttendance();
 
@@ -195,11 +193,19 @@ export default function TeacherAttendance() {
     await startCamera();
   };
 
+  // Seed manual statuses whenever students load (or filters change) while in manual mode.
+  useEffect(() => {
+    if (mode === "manual" && allStudents.length > 0) {
+      setManualStatuses(prev => {
+        const next: Record<number, AttendanceStatus> = {};
+        allStudents.forEach(s => { next[s.id] = prev[s.id] ?? "absent"; });
+        return next;
+      });
+    }
+  }, [mode, allStudents]);
+
   const handleStartManual = () => {
     if (!periodId) { toast({ title: "Select a period first", variant: "destructive" }); return; }
-    const initial: Record<number, AttendanceStatus> = {};
-    allStudents.forEach(s => { initial[s.id] = "absent"; });
-    setManualStatuses(initial);
     setMode("manual");
   };
 
