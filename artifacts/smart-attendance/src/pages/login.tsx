@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useLoginTeacher, useRegisterTeacher, useLoginStudent, useLoginParent } from "@workspace/api-client-react";
 import { useAuth } from "@/hooks/use-auth";
@@ -18,11 +18,13 @@ export default function LoginPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  if (user) {
-    if (user.role === "teacher") setLocation("/teacher/dashboard");
-    else if (user.role === "student") setLocation("/student/dashboard");
-    else setLocation("/parent/dashboard");
-  }
+  useEffect(() => {
+    if (user) {
+      if (user.role === "teacher") setLocation("/teacher/dashboard");
+      else if (user.role === "student") setLocation("/student/dashboard");
+      else setLocation("/parent/dashboard");
+    }
+  }, [user, setLocation]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-900 flex items-center justify-center p-4">
