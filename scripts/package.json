@@ -1,3 +1,4 @@
+
 {
   "name": "@workspace/scripts",
   "version": "0.0.0",
@@ -9,12 +10,12 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "bcryptjs": "catalog:",
-    "pg": "catalog:"
+    "bcryptjs": "^2.4.3",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/pg": "catalog:",
+    "@types/pg": "^8.15.5",
     "@types/node": "catalog:",
     "tsx": "catalog:"
   }
